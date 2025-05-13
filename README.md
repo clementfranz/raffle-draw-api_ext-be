@@ -12,7 +12,7 @@ A brief description of what your project does and who it's for.
 
 All current and planned API endpoints are documented in the following Google Sheet:
 
-[📄 View API Endpoints (Google Sheets)](https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE)
+[📄 View API Endpoints (Google Sheets)](https://docs.google.com/spreadsheets/d/1xzjfTCkI4sQHVth59H1NGnD9fjUjBYOR8o6Xcr7osCE/edit?usp=sharing)
 
 > This sheet includes routes, methods, parameters, authentication requirements, and responses.
 
