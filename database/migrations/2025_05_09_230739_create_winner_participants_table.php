@@ -35,7 +35,6 @@ return new class extends Migration
 
             // Batch Link
             $table->foreignId('participant_batch_id')
-                    ->nullable()
                     ->constrained('participant_batches')
                     ->cascadeOnDelete();
 

@@ -6,31 +6,27 @@ use App\Models\ParticipantBatch;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ParticipantBatch>
+ * @extends Factory<ParticipantBatch>
  */
 class ParticipantBatchFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = ParticipantBatch::class;
+
     public function definition(): array
     {
-        // Generate 9 random letters
+        // Generate random 9 uppercase letters
         $letters = strtoupper($this->faker->lexify('?????????'));
 
-        // Generate 1 random digit
+        // Generate 1 random digit (0-9)
         $digit = $this->faker->randomDigit();
 
-        // Append the digit to the letters and shuffle
-        $raffle_code = $letters . $digit;
+        // Combine and shuffle to make 10 chars
+        $raffle_code = strtoupper(str_shuffle($letters . $digit));
 
-        // Shuffle and make sure it is 10 characters
         return [
-            'raffle_week_code' => strtoupper(str_shuffle($raffle_code)),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'raffle_week_code' => $raffle_code,
+            // ❌ created_at and updated_at are handled automatically by Laravel (timestamps)
+            // so we don't need to manually set them here. Cleaner!
         ];
     }
 }

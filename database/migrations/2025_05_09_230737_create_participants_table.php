@@ -13,7 +13,6 @@ return new class extends Migration
 
             // Basic Info
             $table->string('full_name_raw');
-            $table->string('full_name_cleaned');
             $table->bigInteger('id_entry');
             $table->string('raffle_code')->unique();
             $table->string('regional_location')->nullable();
@@ -28,9 +27,8 @@ return new class extends Migration
 
             // Batch Link
             $table->foreignId('participant_batch_id')
-                    ->nullable()
                     ->constrained('participant_batches')
-                    ->nullOnDelete();
+                    ->cascadeOnDelete();
 
             $table->timestamps();
         });
