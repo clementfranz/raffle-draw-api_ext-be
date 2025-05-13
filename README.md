@@ -1,10 +1,10 @@
-# 🚀 Project Title
+# 🚀 National Raffle Draw - Laravel API
 
-A brief description of what your project does and who it's for.
+This is a clound based API that is meant to be synced to by an offline application - the national raffle draw system. It was first a side project for a big coffee company in the Philippines, but since I just got paid so minimum, I decided to unbrand this and put it in my portfolio and public repositories so anyone can try it.
 
 ## 📂 Project Structure
 
--   `frontend/` – React/Next/Vue/... frontend code
+-   `frontend/` – React/Next/Vue/... frontend code is a separate repository
 -   `backend/` – Node/Laravel/... backend API
 -   `README.md` – You're reading it ✨
 
