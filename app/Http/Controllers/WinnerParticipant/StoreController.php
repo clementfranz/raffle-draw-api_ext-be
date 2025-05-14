@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Participant;
+namespace App\Http\Controllers\WinnerParticipant;
 
-use App\Models\Participant;
+use App\Models\WinnerParticipant;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -16,7 +16,7 @@ class StoreController extends Controller
         ]);
         // Validate the request
         $validated = $request->validate([
-            'full_name' => 'required|string|max:255',
+            'full_name_raw' => 'required|string|max:255',
             'id_entry' => 'required|integer',
             'raffle_code' => 'required|string|unique:participants,raffle_code|max:10',
             'regional_location' => 'required|string',
@@ -27,7 +27,7 @@ class StoreController extends Controller
         ]);
 
         // Create the participant
-        $participant = Participant::create($validated);
+        $participant = WinnerParticipant::create($validated);
 
         return response()->json($participant, 201);
     }

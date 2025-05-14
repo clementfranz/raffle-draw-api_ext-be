@@ -14,8 +14,7 @@ class Participant extends Model
 
     // Define the fillable columns for mass assignment
     protected $fillable = [
-        'full_name_raw',
-        'full_name_cleaned',
+        'full_name',
         'id_entry',
         'raffle_code',
         'regional_location',

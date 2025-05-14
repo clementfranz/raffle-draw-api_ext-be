@@ -37,4 +37,12 @@ class ShowController extends Controller
             ],
         ]);
     }
+
+    public function count()
+    {
+        $total = Participant::count();
+
+        return response()->json(['total' => $total]);
+    }
+
 }

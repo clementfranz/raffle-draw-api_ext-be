@@ -24,12 +24,23 @@ class DatabaseSeeder extends Seeder
 
         ParticipantBatch::factory()->count(5)->create();
 
-        Participant::factory()->count(10)->create();
-        Participant::factory()->count(50000)->create();
-        Participant::factory()->count(50000)->create();
-        Participant::factory()->count(50000)->create();
-        Participant::factory()->count(50000)->create();
-        Participant::factory()->count(50000)->create();
-        Participant::factory()->count(50000)->create();
+        $count100k = 100000;
+        $multiplier100k = 1;
+        $targetTotalParticipants = $count100k * $multiplier100k;
+        $batchSize = 1000; // limited maximum number per generation due to base36 limitations of raffle code
+        $created = 0;
+
+        while ($created < $targetTotalParticipants) {
+            usleep(100000); // 100,000 microseconds = 100 ms
+            $remaining = $targetTotalParticipants - $created;
+            $count = min($batchSize, $remaining);
+
+            Participant::factory()->count($count)->create();
+            $created += $count;
+
+            // Delay for 100 milliseconds
+        }
+
+
     }
 }

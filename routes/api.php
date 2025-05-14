@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::apiResource('winner-participants', App\Http\Controllers\WinnerParticipantController::class);
 Route::apiResource('participant-batches', App\Http\Controllers\ParticipantBatchController::class);
 Route::apiResource('cloud-syncs', App\Http\Controllers\CloudSyncController::class);
+Route::get('ping', App\Http\Controllers\PingController::class);
 
 require base_path('routes/api/participants.php');
 require base_path('routes/api/winners.php');

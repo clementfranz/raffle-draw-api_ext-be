@@ -43,8 +43,8 @@ class ParticipantFactory extends Factory
         }
 
         return [
-            'full_name_raw' => $cleanName,
-            'id_entry' => $this->faker->numberBetween(1000, 9999),
+            'full_name' => $cleanName,
+            'id_entry' => self::$raffleCounter + 1,
             'raffle_code' => $this->generateRaffleCode(self::$raffleCounter),
             'regional_location' => $this->faker->randomElement($regions),
             'registered_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
@@ -129,41 +129,49 @@ class ParticipantFactory extends Factory
         return $rawName;
     }
 
-    public static function initializeRaffleBatchStamp(): string
-    {
-        $now = now();
+public static function initializeRaffleBatchStamp(): string
+{
+    $reference = \Carbon\Carbon::create(2025, 5, 1, 0, 0, 0, 'UTC');
+    $now = now('UTC');
 
-        // Timestamp-based 5 characters
-        $year = strtoupper(base_convert($now->format('y'), 10, 36));
-        $month = strtoupper(base_convert($now->format('m'), 10, 36));
-        $day = strtoupper(base_convert($now->format('d'), 10, 36));
-        $hour = strtoupper(base_convert($now->format('H'), 10, 36));
-        $minute = strtoupper(base_convert($now->format('i'), 10, 36));
-        $minute = substr($minute, -1); // force 1 char
-        $second = strtoupper(base_convert($now->format('s'), 10, 36)); // Convert seconds to base36
+    // Get total milliseconds since reference
+    $milliseconds = $reference->diffInRealMilliseconds($now);
 
-        return $year . $month . $day . $hour . $minute . $second;
-    }
+    // Convert to base36 (uppercase)
+    $base36 = strtoupper(base_convert((string) $milliseconds, 10, 36));
+
+    // Always return exactly 8 characters
+    return str_pad($base36, 8, '0', STR_PAD_LEFT) . "00";
+}
 
 
-    public function generateRaffleCode(int $counter): string
-    {
-        // Ensure raffleBatchStamp is initialized before use
-        self::init();
+public function generateRaffleCode(): string
+{
+    // Ensure raffleBatchStamp is initialized
+    self::init();
 
-        // Base36 characters (0-9, A-Z)
-        $allCharacters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $base = strlen($allCharacters); // 36 characters in base36
-        $code = ''; // Start with an empty code string
+    // Convert the current counter to base36
+    $counterBase36 = strtoupper(base_convert((string) self::$raffleCounter, 10, 36));
 
-        // Generate a 5-character code from the counter
-        for ($i = 0; $i < 4; $i++) {
-            $remainder = $counter % $base; // Get the base36 digit
-            $code = $allCharacters[$remainder] . $code; // Prepend the character
-            $counter = intdiv($counter, $base); // Divide the counter by 36 for the next iteration
-        }
+    // Add the base36 raffleCounter to the raffleBatchStamp
+    $finalCode = self::addBase36(self::$raffleBatchStamp, $counterBase36);
 
-        self::$raffleCounter++; // Increment the counter for the next call
-        return self::$raffleBatchStamp . $code;
-    }
+    self::$raffleCounter++; // Increment for next use
+    return $finalCode;
+}
+
+public static function addBase36(string $base36A, string $base36B): string
+{
+    // Convert both to decimal
+    $decimalA = base_convert($base36A, 36, 10);
+    $decimalB = base_convert($base36B, 36, 10);
+
+    // Add them
+    $sumDecimal = bcadd($decimalA, $decimalB); // bcadd handles large numbers as strings
+
+    // Convert back to base36 and return uppercase
+    return strtoupper(base_convert($sumDecimal, 10, 36));
+}
+
+
 }
