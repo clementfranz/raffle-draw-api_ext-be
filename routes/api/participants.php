@@ -9,6 +9,7 @@ use App\Http\Controllers\Participant\DeleteController;
 
 Route::prefix('participants')->group(function () {
     Route::get('/', IndexController::class); // Get all participants
+    Route::post('/per-batch', [StoreController::class, 'storeBatch']); // Create a new participant
     Route::post('/', StoreController::class); // Create a new participant
     Route::get('/count', [ShowController::class, "count"]); // Show a specific participant
     Route::get('/page/{page}/size/{size}', [ShowController::class, "paginate"]); // Show a specific participant

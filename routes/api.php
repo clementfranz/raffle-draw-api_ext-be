@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Route::apiResource('participants', App\Http\Controllers\ParticipantController::class);
-Route::apiResource('winner-participants', App\Http\Controllers\WinnerParticipantController::class);
+// Route::apiResource('winner-participants', App\Http\Controllers\WinnerParticipantController::class);
 Route::apiResource('participant-batches', App\Http\Controllers\ParticipantBatchController::class);
 Route::apiResource('cloud-syncs', App\Http\Controllers\CloudSyncController::class);
 Route::get('ping', App\Http\Controllers\PingController::class);

@@ -18,11 +18,11 @@ class Participant extends Model
         'id_entry',
         'raffle_code',
         'regional_location',
-        'registered_at',
-        'uploaded_at',
+        // 'registered_at',
+        // 'uploaded_at',
         'is_drawn',
         'drawn_at',
-        'participant_batch_id',
+        // 'participant_batch_id',
     ];
 
     // Define relationships, e.g., a participant belongs to a participant batch

@@ -10,7 +10,7 @@ class PingController extends Controller
     /**
      * Handle ping request to check server status.
      */
-    public function index(): JsonResponse
+    public function __invoke(): JsonResponse
     {
         return response()->json([
             'status' => 'ok',

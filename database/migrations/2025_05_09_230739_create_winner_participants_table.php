@@ -30,7 +30,7 @@ return new class extends Migration
             $table->timestamp('registered_at')->nullable();
             $table->timestamp('uploaded_at')->nullable();
 
-            $table->boolean('is_drawn')->default(false);
+            $table->boolean('is_drawn')->default(true);
             $table->timestamp('drawn_at')->nullable();
 
             // Batch Link
