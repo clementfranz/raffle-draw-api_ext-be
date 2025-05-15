@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('regional_location')->nullable();
 
             // Timestamps
-            $table->timestamp('registered_at')->nullable();
+            $table->timestamp('registered_at');
             $table->timestamp('uploaded_at')->useCurrent();
 
             // Draw Info
