@@ -48,7 +48,7 @@ class StoreController extends Controller
 
         foreach ($entries as $index => $entry) {
             // Default values
-            $entry['is_drawn'] = $entry['is_drawn'] ?? true;
+            $entry['is_drawn'] = $entry['is_drawn'] ?? false;
 
             $validator = Validator::make($entry, [
                 'full_name' => 'required|string|max:255',
