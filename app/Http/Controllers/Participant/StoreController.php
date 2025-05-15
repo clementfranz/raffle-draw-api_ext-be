@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers\Participant;
 
+
 use App\Models\Participant;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\QueryException;
 
-use Carbon\Carbon;
 class StoreController extends Controller
 {
     // Single participant creation
     public function __invoke(Request $request)
     {
-        // Merge default values
+        // Merge default values before validation
         $request->merge([
-            'is_drawn' => $request->input('is_drawn', true)
+            'is_drawn' => $request->input('is_drawn', true),
+            'participant_batch_id' => $request->input('participant_batch_id', 1),
         ]);
 
         // Validate the request
@@ -25,8 +27,8 @@ class StoreController extends Controller
             'raffle_code' => 'required|string|unique:participants,raffle_code|max:10',
             'regional_location' => 'required|string',
             'registered_at' => 'required|date',
-            'is_drawn' => 'sometimes|boolean|default:false',
-            'participant_batch_id' => 'sometimes|integer|default:1'
+            'is_drawn' => 'sometimes|boolean',
+            'participant_batch_id' => 'sometimes|integer',
         ]);
 
         // Create the participant
@@ -36,6 +38,7 @@ class StoreController extends Controller
     }
 
     // Batch participant creation
+    // Batch participant creation
     public function storeBatch(Request $request)
     {
         $entries = $request->input('payload');
@@ -44,35 +47,23 @@ class StoreController extends Controller
             return response()->json(['error' => 'The "payload" field must be an array.'], 422);
         }
 
-        $created = [];
+        $prepared = [];
         $errors = [];
 
         foreach ($entries as $index => $entry) {
             // Default values
-            $entry['is_drawn'] = $entry['is_drawn'] ?? false;
-            $entry['registered_at'] = $entry['registered_at'] ?? false;
+            $entry['is_drawn'] = filter_var($entry['is_drawn'] ?? false, FILTER_VALIDATE_BOOLEAN);
+            $entry['participant_batch_id'] = $entry['participant_batch_id'] ?? 1;
 
-
-            // If the date exists and is not already in a valid format
-            if (!empty($entry['registered_at'])) {
-                try {
-                    $entry['registered_at'] = Carbon::parse($entry['registered_at'])->format('Y-m-d H:i:s');
-                } catch (\Exception $e) {
-                    $entry['registered_at'] = null; // or handle the error if needed
-                }
-            } else {
-                $entry['registered_at'] = null;
-            }
-
-
+            // Validate (ignoring unique raffle_code at this level)
             $validator = Validator::make($entry, [
                 'full_name' => 'required|string|max:255',
                 'id_entry' => 'required|integer',
-                'raffle_code' => 'required|string|unique:participants,raffle_code|max:10',
+                'raffle_code' => 'required|string|max:10',
                 'regional_location' => 'required|string',
                 'registered_at' => 'required|date',
                 'is_drawn' => 'required|boolean',
-                'participant_batch_id' => 'sometimes|integer|default:1'
+                'participant_batch_id' => 'required|integer',
             ]);
 
             if ($validator->fails()) {
@@ -80,12 +71,35 @@ class StoreController extends Controller
                 continue;
             }
 
-            $created[] = Participant::create($validator->validated());
+            $validated = $validator->validated();
+            $validated['created_at'] = now();
+            $validated['updated_at'] = now();
+
+            $prepared[] = $validated;
+        }
+
+        // Chunked upsert to avoid too many placeholders
+        if (!empty($prepared)) {
+            collect($prepared)
+                ->chunk(2500)
+                ->each(function ($chunk) {
+                    Participant::upsert(
+                        $chunk->all(),
+                        ['raffle_code'], // Ensure this is UNIQUE in the DB schema!
+                        []               // Skip updating on conflict
+                    );
+                });
         }
 
         return response()->json([
-            'created' => $created,
-            'errors' => $errors
-        ], 207); // Multi-Status
+            'inserted_count' => count($prepared),
+            'skipped_count' => count($errors),
+            'errors' => $errors,
+        ], 207); // Multi-status response
     }
+
+
+
+
+
 }
