@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
+use Carbon\Carbon;
 class StoreController extends Controller
 {
     // Single participant creation
@@ -49,6 +50,20 @@ class StoreController extends Controller
         foreach ($entries as $index => $entry) {
             // Default values
             $entry['is_drawn'] = $entry['is_drawn'] ?? false;
+            $entry['registered_at'] = $entry['registered_at'] ?? false;
+
+
+            // If the date exists and is not already in a valid format
+            if (!empty($entry['registered_at'])) {
+                try {
+                    $entry['registered_at'] = Carbon::parse($entry['registered_at'])->format('Y-m-d H:i:s');
+                } catch (\Exception $e) {
+                    $entry['registered_at'] = null; // or handle the error if needed
+                }
+            } else {
+                $entry['registered_at'] = null;
+            }
+
 
             $validator = Validator::make($entry, [
                 'full_name' => 'required|string|max:255',
