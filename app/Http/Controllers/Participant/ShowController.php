@@ -25,7 +25,8 @@ class ShowController extends Controller
         $total = Participant::count();
         $participants = Participant::skip(($page - 1) * $size)
                                     ->take($size)
-                                    ->get();
+                                    ->get()
+                                    ->makeHidden(['id']); // 👈 hide 'id' from each item
 
         return response()->json([
             'data' => $participants,
@@ -37,6 +38,7 @@ class ShowController extends Controller
             ],
         ]);
     }
+
 
     public function count()
     {
