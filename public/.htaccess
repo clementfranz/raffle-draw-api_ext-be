@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Serve static files directly
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Laravel fallback
+RewriteRule ^ index.php [L]
