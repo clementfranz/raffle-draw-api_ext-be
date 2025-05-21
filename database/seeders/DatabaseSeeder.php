@@ -2,11 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use \App\Models\ParticipantBatch;
-use \App\Models\Participant;
+use App\Models\User;
+use App\Models\ParticipantBatch;
+use App\Models\Participant;
+
+use Illuminate\Support\Facades\Hash; // Make sure this is at the top
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,32 +16,41 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Add a test user
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'first_name' => 'Kevin',
+            'last_name' => 'Conrado',
+            'picture' => null,
+            'email' => 'kevin.conrado@kpc.com.ph',
+            'password' => Hash::make('kopikoblanca'), // 🔐 Hashed password
         ]);
 
-        ParticipantBatch::factory()->count(5)->create();
+        // Create at least one participant batch
+        ParticipantBatch::factory()->count(1)->create();
 
-        $count100k = 100000;
-        $multiplier100k = 1;
-        $targetTotalParticipants = $count100k * $multiplier100k;
-        $batchSize = 1000; // limited maximum number per generation due to base36 limitations of raffle code
-        $created = 0;
+        // 🌱 Seed whitelist emails
+        $this->call([
+            WhitelistedEmailSeeder::class,
+        ]);
 
-        while ($created < $targetTotalParticipants) {
-            usleep(100000); // 100,000 microseconds = 100 ms
-            $remaining = $targetTotalParticipants - $created;
-            $count = min($batchSize, $remaining);
+        // 🔁 Conditionally create fake participants
+        $initiateFakeParticipants = false;
 
-            Participant::factory()->count($count)->create();
-            $created += $count;
+        if ($initiateFakeParticipants) {
+            $count100k = 100000;
+            $multiplier100k = 1;
+            $targetTotalParticipants = $count100k * $multiplier100k;
+            $batchSize = 1000; // Due to base36 raffle code limitations
+            $created = 0;
 
-            // Delay for 100 milliseconds
+            while ($created < $targetTotalParticipants) {
+                usleep(100000); // 100 ms
+                $remaining = $targetTotalParticipants - $created;
+                $count = min($batchSize, $remaining);
+
+                Participant::factory()->count($count)->create();
+                $created += $count;
+            }
         }
-
-
     }
 }
