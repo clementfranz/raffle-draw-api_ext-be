@@ -1,0 +1,1 @@
+import{w as e}from"./with-props-BQ_hK6-e.js";import{j as t,N as s,O as n}from"./chunk-LSOULM7L-DLna4NcF.js";import{u as i}from"./AuthContext-BgpTDzSM.js";const p=e(function(){const{user:o,loading:r}=i();return console.log("🟢🟢🔴🟢🟢 ACTIVE USER: ",o),r?t.jsx("div",{children:"Loading..."}):o?t.jsx(n,{}):t.jsx(s,{to:"/",replace:!0})});export{p as default};
