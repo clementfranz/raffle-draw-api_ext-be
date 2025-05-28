@@ -39,7 +39,9 @@ class ShowController extends Controller
         ]);
     }
 
-
+    /**
+     * Count total participants.
+     */
     public function count()
     {
         $total = Participant::count();
@@ -47,4 +49,19 @@ class ShowController extends Controller
         return response()->json(['total' => $total]);
     }
 
+    /**
+     * Get the date of the latest participant.
+     */
+    public function getLatestParticipantDate()
+    {
+        $latest = Participant::latest()->first();
+
+        if (!$latest) {
+            return response()->json(['date' => null]);
+        }
+
+        $dateOnly = $latest->created_at->toDateString(); // format: 'YYYY-MM-DD'
+
+        return response()->json(['date' => $dateOnly]);
+    }
 }

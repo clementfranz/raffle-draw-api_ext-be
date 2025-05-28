@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 class DeleteController extends Controller
 {
     /**
-     * Remove the specified participant.
+     * Delete a single participant by ID.
      *
      * @param int $id
      * @return \Illuminate\Http\Response
@@ -25,5 +25,17 @@ class DeleteController extends Controller
         $participant->delete();
 
         return response()->json(['message' => 'Participant deleted successfully']);
+    }
+
+    /**
+     * Delete all participants.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteAll()
+    {
+        Participant::truncate(); // Fast and efficient for deleting all records
+
+        return response()->json(['message' => 'All participants deleted successfully']);
     }
 }

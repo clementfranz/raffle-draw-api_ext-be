@@ -16,4 +16,5 @@ Route::prefix('participants')->group(function () {
     Route::get('{id}', [ShowController::class, "show"]); // Show a specific participant
     Route::put('{id}', UpdateController::class); // Update a participant
     Route::delete('{id}', DeleteController::class); // Delete a participant
+    Route::delete('/all', [DeleteController::class, 'deleteAll']); // Delete a participant
 });
